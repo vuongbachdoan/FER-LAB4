@@ -1,0 +1,14 @@
+body {
+    background-color: #1E1E1E;
+}
+
+nav ul a:hover {
+    background-color: transparent;
+}
+
+.swiper-button-prev, .swiper-button-next {
+    width: 35px;
+    height: 35px;
+    color: #FFF;
+    border-radius: 10;
+}

@@ -13,7 +13,7 @@ export const appRouter = createBrowserRouter([
         element: <Login/>
     },
     {
-        path: '/detail',
+        path: '/detail/:itemId',
         element: <Detail/>
     },
 ])

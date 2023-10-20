@@ -12,9 +12,44 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/scrollbar';
+import { useEffect, useState } from "react";
+import { getMovies } from "../assets/apis/movie";
 
 export const Home = () => {
     const navigate = useNavigate();
+
+    const [movies, setMovies] = useState([]);
+    useEffect(() => {
+        getMovies()
+            .then((res) => {
+                setMovies(res.movies)
+            })
+    }, []);
+
+    const[currentMovie, setCurrentMovie] = useState(null)
+    useEffect(() => {
+        setInterval(() => {
+            const randomNumber = Math.random();
+            const result = Math.floor(randomNumber * (movies.length - 1));
+            setCurrentMovie(movies[result]);
+        }, 5000)
+    }, [movies])
+
+    // {
+    //     "_id": 2734,
+    //     "backdrop_path": "https://image.tmdb.org/t/p/original/9xxLWtnFxkpJ2h1uthpvCRK6vta.jpg",
+    //     "first_aired": "1999-09-20",
+    //     "genres": [
+    //       "Crime",
+    //       "Drama",
+    //       "Mystery"
+    //     ],
+    //     "original_title": "Law & Order: Special Victims Unit",
+    //     "overview": "In the criminal justice system, sexually-based offenses are considered especially heinous. In New York City, the dedicated detectives who investigate these vicious felonies are members of an elite squad known as the Special Victims Unit. These are their stories.",
+    //     "poster_path": "https://image.tmdb.org/t/p/original/ywBt4WKADdMVgxTR1rS2uFwMYTH.jpg",
+    //     "title": "Law & Order: Special Victims Unit",
+    //     "contentType": "show"
+    //   }
     return (
         <>
             <Navbar
@@ -44,14 +79,11 @@ export const Home = () => {
                     zIndex: 1000
                 }}
             >
-                <NavItem>
+                <NavItem onClick={() => navigate('/')}>
                     TV Shows
                 </NavItem>
-                <NavItem>
+                <NavItem onClick={() => navigate('/')}>
                     Movie
-                </NavItem>
-                <NavItem>
-                    New & Popular
                 </NavItem>
 
                 <NavItem>
@@ -73,16 +105,20 @@ export const Home = () => {
                     style={{
                         width: '100%',
                         position: 'relative',
+                        minHeight: '100vh',
+                        height: '100vh'
                     }}
                 >
-                    <img src={Cover} alt="cover" style={{
+                    <img src={currentMovie?.backdrop_path} alt="cover" style={{
                         backgroundSize: 'cover',
                         filter: 'brightness(30%)',
                         width: '100%',
+                        height: '100vh',
                     }} />
-                    <div className="position-absolute top-50 start-0 translate-middle-y z-3 m-5" style={{ width: 438 }}>
-                        <img src={Label} alt="label" height={175} />
-                        <p className="text-light fs-5 text-left my-3">Gifted with superhuman strength, a young woman returns to Korea to find her birth family — only to be entangled in a drug case that could test her power.</p>
+                    <div className="position-absolute top-50 start-0 translate-middle-y z-3 m-5">
+                        <div style={{height: 175}}><img src={currentMovie?.poster_path} alt="label" height={175} /></div>
+                        <p className="text-light fs-5 text-left my-3">{currentMovie?.title}</p>
+                        <p className="text-light fs-5 text-left my-3">{currentMovie?.overview}</p>
                         <Button
                             node="button"
                             style={{
@@ -93,7 +129,7 @@ export const Home = () => {
                             }}
                             className="fw-medium text-dark"
                             waves="light"
-                            onClick={() => navigate('/login')}
+                            onClick={() => navigate(`/detail/${currentMovie._id}`)}
                         >Play</Button>
                         <Button
                             node="button"
@@ -105,7 +141,7 @@ export const Home = () => {
                             }}
                             className="fw-medium text-light"
                             waves="light"
-                            onClick={() => navigate('/detail')}
+                            onClick={() => navigate(`/detail/${currentMovie._id}`)}
                         >More infor</Button>
                     </div>
                 </div>
@@ -121,29 +157,16 @@ export const Home = () => {
                         onSlideChange={() => console.log('slide change')}
                         style={{ paddingLeft: 50, paddingRight: 50 }}
                     >
-                        <SwiperSlide
-                            onClick={() => navigate('/detail', {itemId: '0'})}
-                        >
-                            <img src={Movie1} height={150} width='100%' className="rounded" style={{ objectFit: 'cover'}} alt="mv" />
-                        </SwiperSlide>
-                        <SwiperSlide>
-                            <img src={Movie1} height={150} width='100%' className="rounded" style={{ objectFit: 'cover'}} alt="mv" />
-                        </SwiperSlide>
-                        <SwiperSlide>
-                            <img src={Movie1} height={150} width='100%' className="rounded" style={{ objectFit: 'cover'}} alt="mv" />
-                        </SwiperSlide>
-                        <SwiperSlide>
-                            <img src={Movie1} height={150} width='100%' className="rounded" style={{ objectFit: 'cover'}} alt="mv" />
-                        </SwiperSlide>
-                        <SwiperSlide>
-                            <img src={Movie1} height={150} width='100%' className="rounded" style={{ objectFit: 'cover'}} alt="mv" />
-                        </SwiperSlide>
-                        <SwiperSlide>
-                            <img src={Movie1} height={150} width='100%' className="rounded" style={{ objectFit: 'cover'}} alt="mv" />
-                        </SwiperSlide>
-                        <SwiperSlide>
-                            <img src={Movie1} height={150} width='100%' className="rounded" style={{ objectFit: 'cover'}} alt="mv" />
-                        </SwiperSlide>
+                        {
+                            movies.map((movie) => (
+                                <SwiperSlide
+                                    onClick={() => navigate(`/detail/${movie._id}`)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    <img src={movie?.backdrop_path} height={150} width='100%' className="rounded" style={{ objectFit: 'cover' }} alt="mv" />
+                                </SwiperSlide>
+                            ))
+                        }
                     </Swiper>
                 </div>
             </div>
